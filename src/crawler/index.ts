@@ -1,18 +1,16 @@
 import os from 'os'
-import puppeteer, { Browser, Page } from 'puppeteer';
+import puppeteer, { Browser, LaunchOptions, Page } from 'puppeteer';
 import { SubtitleModel } from '../database/schemas/subtitles'
 
 
 class CrawlerSimpsons {
 
-    SITE_URI: string = 'http://legendas.tv'
+    SITE_URI = 'http://legendas.tv'
 
-    private loginUsername: string = ''
-    loginPassword: string = ''
-    onlyKeyword: boolean = false
+    loginUsername = ''
+    loginPassword = ''
+    onlyKeyword = false
     
-    constructor() {}
-
     bootstrap(loginUsername: string, loginPassword: string, onlyKeyword: boolean) {
         this.loginUsername = loginUsername
         this.loginPassword = loginPassword 
@@ -21,9 +19,7 @@ class CrawlerSimpsons {
     }   
 
     async run () {
-
-
-        const launchOptions: any = {
+        const launchOptions: LaunchOptions = {
             // headless: false,
         }
 
@@ -91,7 +87,7 @@ class CrawlerSimpsons {
 
         const items = await page.$$('.f_left')
 
-        const links: Array<any> = []
+        const links: Array<string> = []
         const subtitles: any = []
         
         for (const item of items) {

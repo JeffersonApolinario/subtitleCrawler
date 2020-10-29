@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 class MongoConnection {
 
   URL: string
-  connectionIsLive: Boolean
+  connectionIsLive: boolean
 
   constructor () {
     this.connectionIsLive = false
