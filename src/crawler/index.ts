@@ -2,7 +2,6 @@ import os from 'os'
 import puppeteer, { Browser, LaunchOptions, Page } from 'puppeteer';
 import { SubtitleModel } from '../database/schemas/subtitles'
 
-
 class CrawlerSimpsons {
 
     SITE_URI = 'http://legendas.tv'
@@ -10,13 +9,13 @@ class CrawlerSimpsons {
     loginUsername = ''
     loginPassword = ''
     onlyKeyword = false
-    
+
     bootstrap(loginUsername: string, loginPassword: string, onlyKeyword: boolean) {
         this.loginUsername = loginUsername
-        this.loginPassword = loginPassword 
+        this.loginPassword = loginPassword
         this.onlyKeyword = onlyKeyword
         return this
-    }   
+    }
 
     async run () {
         const launchOptions: LaunchOptions = {
@@ -48,8 +47,6 @@ class CrawlerSimpsons {
         await this.createOrUpdateInDatabase(subtitlesCompleted)
         console.log(`Foram encontradas ${subtitlesCompleted.length} legendas`)
         await browser.close()
-
-
     }
 
     async initializePage (browser: Browser) {
@@ -89,9 +86,9 @@ class CrawlerSimpsons {
 
         const links: Array<string> = []
         const subtitles: any = []
-        
+
         for (const item of items) {
-            
+
             const name = await item.$eval('p', el => el.textContent)
             const linkRelative = await item.$eval('p a', el => el.getAttribute('href'))
 
@@ -106,7 +103,7 @@ class CrawlerSimpsons {
 
             const totalDownloads = parseInt(downloadsText.replace(/\D/g,''))
             const rating = parseInt(ratingText.replace(/\D/g,''))
-            
+
             const dateAndUserInfo = otherInfos.split(" ")
             const username = dateAndUserInfo[2]
             const date = dateAndUserInfo[4]
@@ -168,18 +165,18 @@ class CrawlerSimpsons {
 
         return { like, dislike, downloadLink, totalLikes, likeRatio}
     }
-    
+
     async createOrUpdateInDatabase(subtitlesCompleted: Array<any>) {
         const subtitlesNames = subtitlesCompleted.map(subtitle => subtitle.name)
         const subtitlesFoundDB = await SubtitleModel.find({ name: { $in: subtitlesNames} })
-        
+
         const subtitlesToUpdate = []
         const subtitlesToCreate = []
 
         for (const subtitle of subtitlesCompleted) {
             const { name } = subtitle
             const subtitleFoundDB = subtitlesFoundDB.find((subtitleDB: any) => subtitleDB.name === name)
-            
+
             if (subtitleFoundDB) {
                 subtitle.updatedAt = new Date()
                 const filter = { name }
